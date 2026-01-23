@@ -1,6 +1,6 @@
 # syntax.py
 # Practice1 - Python Syntax examples
-
+#My anemis Azim and i am 18years old
 # --- Sub theme: Syntax (Indentation) ---
 if 5 > 2:
     print("Five is greater than two!")
