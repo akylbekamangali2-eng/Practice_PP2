@@ -1,22 +1,34 @@
-#Syntax
+# syntax.py
+# Practice1 - Python Syntax examples
+#My anemis Azim and i am 18years old
+# --- Sub theme: Syntax (Indentation) ---
+if 5 > 2:
+    print("Five is greater than two!")
 
-#Python Indentation
-if 6 > 2:
- print("Six is greater than two!") 
-if 6 > 2:
-        print("Six is greater than two!") 
+# Примеры ошибок (закомментированы, чтобы файл запускался)
+"""
+if 5 > 2:
+print("Five is greater than two!")  # ERROR: no indentation
+"""
 
-#Python Variables
-x = 6
-y = "Hello,beautiful World!"
+"""
+if 5 > 2:
+    print("Five is greater than two!")
+        print("Five is greater than two!")  # ERROR: unexpected indent
+"""
 
+print("-----")
 
-#Statements
-
-#Many Sthertatements
-print("Hello, teacher!")
-print("Have a good day for everyone.")
+# --- Sub theme: Statements ---
+print("Python is fun!")
+print("Hello World!")
+print("Have a good day.")
 print("Learning Python is fun!")
 
-#Semicolons (Optional, Rarely Used)
-print("Hey!"); print("How are you?"); print("Goodbye!")
+print("-----")
+
+# Можно писать несколько команд в одной строке через ;
+print("Hello"); print("How are you?"); print("Bye bye!")
+
+# Пример ошибки (тоже закомментирован)
+# print("Python is fun!") print("Really!")  # ERROR
