@@ -1,1 +1,0 @@
-print("MY fuul name is AMngali Akylbek")
