@@ -15,7 +15,16 @@ if age<18:
     print("child")
 
 #finding the abs value
-number=int(input())
+number=int(input("enter some number"))
 if number<0:
     number=(-number)
 print(number)
+
+#finding max
+a,b,c=map(int,input().split())
+max=a
+if (b>maxi):
+    maxi=b
+if(c>maxi):
+    maxi=c
+print("The maximum is equal to",maxi)
