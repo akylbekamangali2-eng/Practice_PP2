@@ -16,8 +16,6 @@ for i in range(1,8):
         continue
     print(i)
 
-print(end="\n")
-
 #skip A,a
 name="Akylbek"
 for i in name:
