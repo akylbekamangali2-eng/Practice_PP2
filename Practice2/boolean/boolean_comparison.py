@@ -13,3 +13,11 @@ a=int(input())
 b=int(input())
 a,b=b,a
 print(a>b,a<b,a==b,a!=b)
+
+Messi=1001
+Ronaldo=-1001
+print(Messi>Ronaldo)
+
+Barcelona="z"
+RealMadrid="a"
+print(Barcelona>RealMadrid)
