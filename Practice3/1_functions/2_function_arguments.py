@@ -1,10 +1,11 @@
+#in this page i will work with arguments in the fiunctions
 def Hello(name):
   print("Hello"+name)
 
 Hello("Akylbek")
 Hello("Azimbek")
 Hello("Superman")
-
+#giving the values
 def pos(x):
   if x>0:
     print(x)

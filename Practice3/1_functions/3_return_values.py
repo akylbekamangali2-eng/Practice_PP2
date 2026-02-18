@@ -1,3 +1,4 @@
+#The basic usage of the return in this fiel]d
 def function():
   return "Hello from a function"
 
@@ -8,7 +9,7 @@ def prime(x):
     if x%i==0:
       return "Not Prime"
   return "Prime"
-
+#exapmles with the prime examples
 print(prime(2))
 a=prime(6)
 b=prime(11)
@@ -21,7 +22,7 @@ def max(massiv):
     if massiv[i]>mx:
       mx=massiv[i]
   return mx
-
+#finding tyhe max valus
 massiv=[1,25,3,0]
 print(max(massiv))
 

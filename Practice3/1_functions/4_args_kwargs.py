@@ -1,3 +1,4 @@
+#In this part i will talk about args using the several variables
 def my_function(*kids):
   print("The youngest child is " + kids[2])
 
@@ -16,9 +17,9 @@ my_function("Messi", "Suarez", "Neymar")
 def my_function(greeting, *names):
   for name in names:
     print(greeting, name)
-
+#the basic usage with list of names
 my_function("Hello", "Mesii", "Suarez", "Neymar")
-
+#the basic usgae with number lists
 def my_function(*numbers):
   total = 0
   for num in numbers:

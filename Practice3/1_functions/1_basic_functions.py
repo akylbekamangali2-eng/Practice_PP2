@@ -1,3 +1,4 @@
+#This is a basic comment
 def KBTU():
   print("Hello from KBTU")
 
@@ -7,7 +8,7 @@ def  Almaty():
   print("Hello from Almaty")
 
 Almaty()
-
+#using the basic syntax 
 def my_function():
   print("Hello from a function")
 
