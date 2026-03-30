@@ -1,9 +1,3 @@
-<<<<<<< HEAD
-first_name,phone
-Akylbek,87052048274
-Azimbek,87772048274
-Asylbek,87752048274
-=======
 Name,Phone
 Aarav,87011234501
 Abigail,87011234502
@@ -105,4 +99,3 @@ Luke,87011234597
 Mason,87011234598
 Mateo,87011234599
 Matthew,87011234600
->>>>>>> 813e48a (Add Practice7 - PhoneBook with PostgreSQL)
