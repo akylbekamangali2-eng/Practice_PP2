@@ -1,186 +1,89 @@
-import psycopg2
 import csv
-from config import load_config
+from connect import get_connection
+
+conn = get_connection()
+cur = conn.cursor()
 
 def create_table():
-    command = """
-              CREATE TABLE IF NOT EXISTS phonebook \
-              ( \
-                  id \
-                  SERIAL \
-                  PRIMARY \
-                  KEY, \
-                  first_name \
-                  VARCHAR \
-              ( \
-                  50 \
-              ) NOT NULL,
-                  phone VARCHAR \
-              ( \
-                  20 \
-              ) NOT NULL UNIQUE
-                  ) \
-              """
-    conn = None
-    try:
-        params = load_config()
-        conn = psycopg2.connect(**params)
-        cur = conn.cursor()
-        cur.execute(command)
-        cur.close()
-        conn.commit()
-        print("Table 'phonebook' ensured/created successfully")
-    except (Exception, psycopg2.DatabaseError) as error:
-        print("Error:", error)
-    finally:
-        if conn is not None:
-            conn.close()
+    cur.execute("""
+        CREATE TABLE IF NOT EXISTS phonebook (
+            id SERIAL PRIMARY KEY,
+            first_name TEXT,
+            phone TEXT
+        )
+    """)
 
+def add_from_console():
+    name = input("Name: ")
+    phone = input("Phone: ")
+    cur.execute("INSERT INTO phonebook (first_name, phone) VALUES (%s, %s)", (name, phone))
+    print("Contact added.")
 
-def insert_from_csv(csv_file_path):
-    sql = "INSERT INTO phonebook(first_name, phone) VALUES(%s, %s) ON CONFLICT (phone) DO NOTHING;"
-    conn = None
-    try:
-        params = load_config()
-        conn = psycopg2.connect(**params)
-        cur = conn.cursor()
+def add_from_csv():
+    filename = input("CSV filename: ")
+    with open(filename, "r", encoding="utf-8") as file:
+        reader = csv.reader(file)
+        next(reader)
+        for row in reader:
+            cur.execute("INSERT INTO phonebook (first_name, phone) VALUES (%s, %s)", (row[0], row[1]))
+    print("Contacts from CSV added.")
 
-        with open(csv_file_path, 'r', encoding='utf-8') as f:
-            reader = csv.reader(f)
-            next(reader)
-            for row in reader:
-                cur.execute(sql, (row[0], row[1]))
+def get_users():
+    print("1. All | 2. By name | 3. By number")
+    choice = input("Choice: ")
+    
+    if choice == "1":
+        cur.execute("SELECT * FROM phonebook ORDER BY id ASC")
+    elif choice == "2":
+        name = input("Name: ")
+        cur.execute("SELECT * FROM phonebook WHERE first_name ILIKE %s", ('%' + name + '%',))
+    elif choice == "3":
+        phone = input("Number: ")
+        cur.execute("SELECT * FROM phonebook WHERE phone LIKE %s", (phone + '%',))
+        
+    for row in cur.fetchall():
+        print(f"ID: {row[0]} | Name: {row[1]} | Phone: {row[2]}")
 
-        conn.commit()
-        cur.close()
-        print(f"Data inserted from '{csv_file_path}' successfully")
-    except (Exception, psycopg2.DatabaseError) as error:
-        print("Error:", error)
-    finally:
-        if conn is not None:
-            conn.close()
+def update_user():
+    print("1. Update name | 2. Update phone")
+    choice = input("Choice: ")
+    
+    if choice == "1":
+        old_name = input("Name to update: ")
+        new_name = input("New name: ")
+        cur.execute("UPDATE phonebook SET first_name = %s WHERE first_name = %s", (new_name, old_name))
+    elif choice == "2":
+        name = input("Name to update: ")
+        new_phone = input("New number: ")
+        cur.execute("UPDATE phonebook SET phone = %s WHERE first_name = %s", (new_phone, name))
+    
+    print("Updated.")
 
+def delete_user():
+    print("1. By name | 2. By number")
+    choice = input("Choice: ")
+    
+    if choice == "1":
+        name = input("Name to delete: ")
+        cur.execute("DELETE FROM phonebook WHERE first_name = %s", (name,))
+    elif choice == "2":
+        phone = input("Number to delete: ")
+        cur.execute("DELETE FROM phonebook WHERE phone = %s", (phone,))
+        
+    print("Deleted.")
 
-def insert_from_console():
-    print("\n--- Add New Contact ---")
-    first_name = input("Enter first name: ")
-    phone = input("Enter phone number: ")
-
-    sql = "INSERT INTO phonebook(first_name, phone) VALUES(%s, %s);"
-    conn = None
-    try:
-        params = load_config()
-        conn = psycopg2.connect(**params)
-        cur = conn.cursor()
-        cur.execute(sql, (first_name, phone))
-        conn.commit()
-        cur.close()
-        print(f"Contact '{first_name}' added successfully")
-    except (Exception, psycopg2.DatabaseError) as error:
-        print("Error:", error)
-    finally:
-        if conn is not None:
-            conn.close()
-
-
-def update_contact(target_phone, new_first_name, new_phone):
-    sql = "UPDATE phonebook SET first_name = %s, phone = %s WHERE phone = %s;"
-    conn = None
-    try:
-        params = load_config()
-        conn = psycopg2.connect(**params)
-        cur = conn.cursor()
-        cur.execute(sql, (new_first_name, new_phone, target_phone))
-        updated_rows = cur.rowcount
-        conn.commit()
-        cur.close()
-        print(f"Updated {updated_rows} contact")
-    except (Exception, psycopg2.DatabaseError) as error:
-        print("Error:", error)
-    finally:
-        if conn is not None:
-            conn.close()
-
-
-def query_contacts(filter_by=None, filter_value=None):
-    conn = None
-    try:
-        params = load_config()
-        conn = psycopg2.connect(**params)
-        cur = conn.cursor()
-
-        if filter_by == "first_name":
-            sql = "SELECT id, first_name, phone FROM phonebook WHERE first_name ILIKE %s;"
-            cur.execute(sql, (f"%{filter_value}%",))
-        elif filter_by == "phone":
-            sql = "SELECT id, first_name, phone FROM phonebook WHERE phone = %s;"
-            cur.execute(sql, (filter_value,))
-        else:
-            sql = "SELECT id, first_name, phone FROM phonebook ORDER BY id;"
-            cur.execute(sql)
-
-        rows = cur.fetchall()
-        print("\n--- Query Results ---")
-        if not rows:
-            print("No contacts found.")
-        for row in rows:
-            print(f"ID: {row[0]} | Name: {row[1]} | Phone: {row[2]}")
-        print()
-        cur.close()
-    except (Exception, psycopg2.DatabaseError) as error:
-        print("Error:", error)
-    finally:
-        if conn is not None:
-            conn.close()
-
-
-def delete_contact(delete_by, filter_value):
-    conn = None
-    try:
-        params = load_config()
-        conn = psycopg2.connect(**params)
-        cur = conn.cursor()
-
-        if delete_by == "first_name":
-            sql = "DELETE FROM phonebook WHERE first_name = %s;"
-        elif delete_by == "phone":
-            sql = "DELETE FROM phonebook WHERE phone = %s;"
-        else:
-            print("Use 'first_name' or 'phone'!")
-            return
-
-        cur.execute(sql, (filter_value,))
-        deleted_rows = cur.rowcount
-        conn.commit()
-        cur.close()
-        print(f"Deleted {deleted_rows} contact(s) successfully")
-    except (Exception, psycopg2.DatabaseError) as error:
-        print("Error:", error)
-    finally:
-        if conn is not None:
-            conn.close()
-
-
-if __name__ == '__main__':
+def main_menu():
     create_table()
-    insert_from_csv('contacts.csv')
+    while True:
+        print("\n1.Add | 2.CSV | 3.Search | 4.Update | 5.Delete | 0.Exit")
+        choice = input("Choice: ")
+        
+        if choice == "1": add_from_console()
+        elif choice == "2": add_from_csv()
+        elif choice == "3": get_users()
+        elif choice == "4": update_user()
+        elif choice == "5": delete_user()
+        elif choice == "0": break
 
-    print("Listing all contacts:")
-    query_contacts()
-
-    print("Searching for 'Akylbek':")
-    query_contacts(filter_by="first_name", filter_value="Akylbek")
-
-    print("Updating Maygul's data...")
-    update_contact(target_phone="87772048274", new_first_name="AzimbekUpdated", new_phone="87772048200")
-
-    query_contacts(filter_by="first_name", filter_value="AzimbekUpdated")
-
-    print("Deleting Asylbek by phone...")
-    delete_contact(delete_by="phone", filter_value="87752048274")
-
-    print("Deleting Akylbek by first_name...")
-    delete_contact(delete_by="first_name", filter_value="Akylbek")
-
-    print("Final Phonebook Status:")
-    query_contacts()
+if __name__ == "__main__":
+    main_menu()
