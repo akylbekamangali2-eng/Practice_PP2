@@ -5,7 +5,7 @@ pygame.init()
 screen = pygame.display.set_mode((400, 200))
 pygame.display.set_caption("Music Player")
 
-font = pygame.font.Font(None, 30)
+font = pygame.font.Font(None,22)
 
 running = True
 while running:
@@ -21,7 +21,7 @@ while running:
 
     screen.fill((255, 255, 255))
 
-    text = font.render("P:play, Space:stop, n, b: next", True, (0, 0, 0))
+    text = font.render("P: play, S: stop, Space: pause, N:next, B: previous", True, (0, 0, 0))
     screen.blit(text, (20, 60))
     
 
